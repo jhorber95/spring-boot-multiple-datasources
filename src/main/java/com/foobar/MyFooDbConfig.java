@@ -19,36 +19,35 @@ import java.util.HashMap;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(entityManagerFactoryRef = "barEntityManagerFactory",
-        transactionManagerRef = "barTransactionManager", basePackages = {"com.foobar.bar.repo"})
-public class BarDbConfig {
-
-    @Value("${bar.jpa.properties.hibernate.dialect}")
+@EnableJpaRepositories(entityManagerFactoryRef = "myFooEntityManagerFactory",
+        transactionManagerRef = "myFooTransactionManager", basePackages = {"com.foobar.mysql.repo"})
+public class MyFooDbConfig {
+    @Value("${mysql.jpa.properties.hibernate.dialect}")
     private String hibernateDialect;
 
-    @Bean(name = "barDataSource")
-    @ConfigurationProperties(prefix = "bar.datasource")
+    @Bean(name = "myFooDataSource")
+    @ConfigurationProperties(prefix = "mysql.datasource")
     public DataSource dataSource() {
         return DataSourceBuilder.create().build();
     }
 
-    @Bean(name = "barEntityManagerFactory")
+    @Bean(name = "myFooEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean barEntityManagerFactory(
-            EntityManagerFactoryBuilder builder, @Qualifier("barDataSource") DataSource dataSource) {
+            EntityManagerFactoryBuilder builder, @Qualifier("myFooDataSource") DataSource dataSource) {
 
         HashMap<String, Object> props = new HashMap<>();
         props.put("hibernate.dialect", hibernateDialect);
 
         return builder.dataSource(dataSource)
                 .properties(props)
-                .packages("com.foobar.bar.domain")
-                .persistenceUnit("bar")
+                .packages("com.foobar.mysql.domain")
+                .persistenceUnit("foo")
                 .build();
     }
 
-    @Bean(name = "barTransactionManager")
+    @Bean(name = "myFooTransactionManager")
     public PlatformTransactionManager barTransactionManager(
-            @Qualifier("barEntityManagerFactory") EntityManagerFactory barEntityManagerFactory) {
+            @Qualifier("myFooEntityManagerFactory") EntityManagerFactory barEntityManagerFactory) {
         return new JpaTransactionManager(barEntityManagerFactory);
     }
 

@@ -16,10 +16,12 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.util.HashMap;
+
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory",
-    basePackages = {"com.foobar.foo.repo"})
+@EnableJpaRepositories(
+        basePackages = {"com.foobar.foo.repo"})
 public class FooDbConfig {
 
   @Primary
@@ -33,7 +35,11 @@ public class FooDbConfig {
   @Bean(name = "entityManagerFactory")
   public LocalContainerEntityManagerFactoryBean entityManagerFactory(
       EntityManagerFactoryBuilder builder, @Qualifier("dataSource") DataSource dataSource) {
-    return builder.dataSource(dataSource).packages("com.foobar.foo.domain").persistenceUnit("foo")
+
+
+    return builder.dataSource(dataSource).packages("com.foobar.foo.domain")
+            .persistenceUnit("foo")
+            .persistenceUnit("user")
         .build();
   }
 
